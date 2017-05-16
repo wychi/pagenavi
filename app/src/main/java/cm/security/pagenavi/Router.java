@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import java.util.HashMap;
 import java.util.Stack;
@@ -109,22 +110,42 @@ public class Router implements IRouter {
 
     @Override
     public void onStart() {
+        if(mInTransition) {
+            return;
+        }
 
+        if(getTopPage() != null)
+            getTopPage().onStart();
     }
 
     @Override
     public void onResume() {
+        if(mInTransition) {
+            return;
+        }
 
+        if(getTopPage() != null)
+            getTopPage().onResume();
     }
 
     @Override
     public void onPause() {
+        if(mInTransition) {
+            return;
+        }
 
+        if(getTopPage() != null)
+            getTopPage().onPause();
     }
 
     @Override
     public void onStop() {
+        if(mInTransition) {
+            return;
+        }
 
+        if(getTopPage() != null)
+            getTopPage().onStop();
     }
 
     @Override
@@ -154,11 +175,23 @@ public class Router implements IRouter {
 
     @Override
     public boolean onBackPressed() {
+        if(mInTransition)
+            return true;
+
+        if(getTopPage() != null && getTopPage().onBackPressed()) {
+            return true;
+        }
+
         return false;
     }
 
     @Override
     public void onHomePressed() {
 
+    }
+
+    @VisibleForTesting
+    int getStackNum() {
+        return mStacks.size();
     }
 }
